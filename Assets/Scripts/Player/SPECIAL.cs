@@ -11,6 +11,27 @@ public class SPECIAL
     public int A {get; set;}
     public int L {get; set;}
 
+    public SPECIAL()
+    {
+        S = 0;
+        P = 0;
+        E = 0;
+        C = 0;
+        I = 0;
+        A = 0;
+        L = 0;
+    }
+    public SPECIAL(int s = 0, int p = 0, int e = 0, int c = 0, int i = 0, int a = 0, int l = 0)
+    {
+        S = s;
+        P = p;
+        E = e;
+        C = c;
+        I = i;
+        A = a;
+        L = l;
+    }
+
     public static SPECIAL operator + (SPECIAL a, SPECIAL b)
     {
         return new SPECIAL() 
