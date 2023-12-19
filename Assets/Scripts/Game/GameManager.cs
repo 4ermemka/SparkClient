@@ -1,26 +1,56 @@
-using System.Collections.Generic;
+using System;
+using System.Net;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-
-    private List<Player> _players = new List<Player>();
-    private Player _currentPlayer;
+    private Client _client;
 
     public void Awake()
     {
         Instance = this;
     }
 
-    public void ConfigureTest()
+
+    public void Start()
     {
-        _players = new List<Player>()
+        _client = new Client();
+        _client.OnLog += LogInfo;
+    }
+
+    private void LogInfo(string message)
+    {
+        Debug.Log(message);
+    }
+
+    public void Connect()
+    {
+        try 
         {
-            new Player("Player-1", 5, new Stats(3,2,1,0,2,0,0), 16),
-            new Player("Player-2", 15, new Stats(2,3,1,1,2,3,2), 16),
-            new Player("Player-3", 25, new Stats(1,0,2,3,2,0,1), 16),
-            new Player("Player-4", 55, new Stats(0,1,3,0,2,0,3), 16)
-        };
+            try
+            {
+                _client.Connect("127.0.0.1", 3535);
+                //Client.SendText("Salute!");
+            }
+            catch (Exception ex)
+            { 
+                Debug.Log($"{ex.Message} :::: { ex.StackTrace}");
+            }
+        }
+        catch (Exception ex)
+        { 
+            Debug.LogException(ex);
+        }
+    }
+
+    public void Send()
+    {
+        _client?.SendMessage("Bonjour");
+    }
+
+    public void OnDestroy()
+    {
+        _client?.Stop();
     }
 }
