@@ -31,22 +31,16 @@ public class GameManager : MonoBehaviour
             try
             {
                 _client.Connect("127.0.0.1", 3535);
-                //Client.SendText("Salute!");
             }
             catch (Exception ex)
             { 
-                Debug.Log($"{ex.Message} :::: { ex.StackTrace}");
+                Debug.Log($"{ex.Message} : { ex.StackTrace}");
             }
         }
         catch (Exception ex)
         { 
             Debug.LogException(ex);
         }
-    }
-
-    public void Send()
-    {
-        _client?.SendMessage("Bonjour");
     }
 
     public void OnDestroy()
