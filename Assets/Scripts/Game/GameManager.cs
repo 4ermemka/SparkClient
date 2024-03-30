@@ -1,50 +1,105 @@
+using Assets.Scripts.Shared.Tools;
+using Assets.Scripts.Shared.View;
 using System;
-using System.Net;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    private Client _client;
+    private NetManager netManager;
+    
+    [SerializeField]
+    private ClientViewManager ViewManager;
+
+    [SerializeField]
+    private List<SimpleViewConsole> LogEndpoints;
 
     public void Awake()
     {
         Instance = this;
     }
 
-
     public void Start()
     {
-        _client = new Client();
-        _client.OnLog += LogInfo;
-    }
+        ConsoleLogger.OnLogInformation += LogInformation;
+        ConsoleLogger.OnLogWarning += LogWarning;
+        ConsoleLogger.OnLogError += LogError;
+        ConsoleLogger.OnLogException += LogException;
 
-    private void LogInfo(string message)
-    {
-        Debug.Log(message);
-    }
+        netManager = new NetManager();
 
-    public void Connect()
-    {
-        try 
+        ViewManager.OnConnectionAttempt += ConnectToServer;
+
+        netManager.OnConnectedToServer += new Action<string>((msg)=>
         {
-            try
-            {
-                _client.Connect("127.0.0.1", 3535);
-            }
-            catch (Exception ex)
-            { 
-                Debug.Log($"{ex.Message} : { ex.StackTrace}");
-            }
-        }
-        catch (Exception ex)
+            ConsoleLogger.LogInformation("NetManager", msg);
+            ViewManager.ShowView(typeof(MenuView));
+        });
+        
+        netManager.OnDisconnectedFromServer += new Action<string>((msg) =>
+        {
+            ConsoleLogger.LogInformation("NetManager", msg);
+            ViewManager.ShowView(typeof(ConnectView));
+        });
+    }
+
+    public void LogInformation(string source, string message)
+    {
+        Debug.Log($"[{source}][INF] {message}");
+        if (LogEndpoints != null && LogEndpoints.Count > 0)
         { 
-            Debug.LogException(ex);
+            foreach (var console in LogEndpoints) 
+            { 
+                console.LogInformation(source, message);
+            }
         }
+    }
+
+    public void LogWarning(string source, string message)
+    {
+        Debug.LogWarning($"[{source}][WRN] {message}");
+
+        if (LogEndpoints != null && LogEndpoints.Count > 0)
+        {
+            foreach (var console in LogEndpoints)
+            {
+                console.LogWarning(source, message);
+            }
+        }
+    }
+
+    public void LogError(string source, string message)
+    {
+        Debug.LogWarning($"[{source}][INF] {message}");
+        if (LogEndpoints != null && LogEndpoints.Count > 0)
+        {
+            foreach (var console in LogEndpoints)
+            {
+                console.LogError(source, message);
+            }
+        }
+    }
+
+    public void LogException(string source,Exception ex)
+    {
+        Debug.LogWarning(ex.Message);
+        if (LogEndpoints != null && LogEndpoints.Count > 0)
+        {
+            foreach (var console in LogEndpoints)
+            {
+                console.LogException(source, ex);
+            }
+        }
+    }
+
+    public void ConnectToServer()
+    {
+        netManager.Connect();
     }
 
     public void OnDestroy()
     {
-        _client?.Stop();
+        netManager?.Disconnect();
     }
 }
