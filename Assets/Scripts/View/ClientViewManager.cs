@@ -38,17 +38,17 @@ public class ClientViewManager : MonoBehaviour
 
             if (selectedView != null)
             {
-                ConsoleLogger.LogInformation("VeiwManager", $"selectedView != null");
+                //ConsoleLogger.LogInformation("VeiwManager", $"selectedView != null");
 
                 foreach (var view in Views)
                 {
-                    ConsoleLogger.LogInformation("VeiwManager", $"Hiding {view.GetType()}");
+                    //ConsoleLogger.LogInformation("VeiwManager", $"Hiding {view.GetType()}");
                     view.Hide();
-                    ConsoleLogger.LogInformation("VeiwManager", $"Hidden! {view.GetType()}");
+                    //ConsoleLogger.LogInformation("VeiwManager", $"Hidden! {view.GetType()}");
                 }
 
                 selectedView.Show();
-                ConsoleLogger.LogInformation("VeiwManager", $"Showing {type}");
+                //ConsoleLogger.LogInformation("VeiwManager", $"Showing {type}");
             }
 
             else

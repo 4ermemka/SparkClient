@@ -41,7 +41,9 @@ public class NetManager
     {
         try
         {
-            _client.Connect("127.0.0.28", 3535);
+            ConsoleLogger.LogInformation("NetManager", $"Connecting to server: {_client.ConnectionAddress}");
+            _client.Connect("192.168.0.104", 3535);
+            ConsoleLogger.LogInformation("NetManager", $"Connected to server: {_client.ConnectionAddress}");
         }
         catch (Exception ex)
         {
